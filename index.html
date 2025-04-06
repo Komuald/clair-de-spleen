@@ -718,6 +718,7 @@
             margin-bottom: 0.5rem;
         }
     </style>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <!-- Loader -->
@@ -1210,5 +1211,36 @@ Permet à mes mots de naître.</div>
             });
         });
     </script>
+    <script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      } else {
+        document.location.href = "/admin/";
+      }
+    });
+    
+    // Gérer spécifiquement les redirections de réinitialisation de mot de passe
+    if (document.location.hash.startsWith('#recovery_token=')) {
+      // Ouvrir automatiquement le widget d'identité
+      const recoveryToken = document.location.hash.replace('#recovery_token=', '');
+      window.netlifyIdentity.open('recover');
+      window.netlifyIdentity.gotrue.recover(recoveryToken, true)
+        .then(() => {
+          console.log('Récupération réussie, redirection...');
+          // Une fois la récupération terminée, redirigez vers l'admin
+          setTimeout(() => {
+            document.location.href = "/admin/";
+          }, 1000);
+        })
+        .catch(err => {
+          console.error('Erreur lors de la récupération', err);
+        });
+    }
+  }
+</script>
 </body>
 </html>
