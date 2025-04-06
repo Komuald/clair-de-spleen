@@ -1,0 +1,20 @@
+backend:
+  name: github
+  repo: Komuald/clair-de-spleen
+  branch: main
+
+media_folder: "images" # Dossier où seront stockées les images téléchargées
+public_folder: "/images" # URL publique vers les images
+
+collections:
+  - name: "poemes" # Nom utilisé dans la route, ex: /admin/collections/poemes
+    label: "Poèmes" # Texte affiché dans l'interface d'administration
+    folder: "_poemes" # Dossier où les poèmes seront stockés
+    create: true # Autoriser les utilisateurs à créer de nouveaux poèmes
+    slug: "{{year}}-{{month}}-{{day}}-{{slug}}" # Modèle de nommage des fichiers
+    fields: # Les champs pour chaque document
+      - {label: "Titre", name: "title", widget: "string"}
+      - {label: "Date", name: "date", widget: "datetime"}
+      - {label: "Catégorie", name: "category", widget: "select", options: ["Mélancolie", "Amour", "Nature", "Réflexion", "Urbain"]}
+      - {label: "Image", name: "image", widget: "image", required: false}
+      - {label: "Poème", name: "body", widget: "markdown"}
