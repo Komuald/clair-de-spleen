@@ -1,7 +1,7 @@
 ---
 title: Cassandre
-date: 2025-04-06T12:00:00Z
-category: Mythes
+date: 2025-04-06T12:00:00.000Z
+category: Mélancolie
 image: /images/placeholder.jpg
 ---
 
