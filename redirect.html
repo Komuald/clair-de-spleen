@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Redirection d'authentification | Clair de Spleen</title>
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    window.onload = function() {
+      // Si l'URL contient un token de confirmation ou de récupération
+      if (window.location.hash) {
+        // Attendre que le widget soit chargé
+        window.netlifyIdentity.on('init', user => {
+          // Traiter le token
+          if (window.location.hash.startsWith('#confirmation_token=')) {
+            window.netlifyIdentity.confirm(window.location.hash.replace('#confirmation_token=', ''))
+              .then(() => window.location.href = "/admin/")
+              .catch(err => console.error('Erreur de confirmation', err));
+          } else if (window.location.hash.startsWith('#recovery_token=')) {
+            window.netlifyIdentity.open('recover');
+            window.netlifyIdentity.gotrue.recover(window.location.hash.replace('#recovery_token=', ''), true)
+              .then(() => {
+                console.log('Récupération réussie');
+                setTimeout(() => window.location.href = "/admin/", 1000);
+              })
+              .catch(err => console.error('Erreur de récupération', err));
+          }
+        });
+      } else {
+        // S'il n'y a pas de token, rediriger vers la page d'accueil
+        window.location.href = "/";
+      }
+    }
+  </script>
+</head>
+<body>
+  <div style="text-align: center; margin-top: 100px;">
+    <h1>Traitement de l'authentification...</h1>
+    <p>Vous allez être redirigé automatiquement. Si rien ne se passe, <a href="/admin/">cliquez ici</a>.</p>
+  </div>
+</body>
+</html>
