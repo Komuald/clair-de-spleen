@@ -2,8 +2,8 @@ backend:
   name: git-gateway
   branch: main
 
-media_folder: "static/img"
-public_folder: "/img"
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
 
 collections:
   - name: "poemes"
