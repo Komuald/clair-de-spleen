@@ -4,13 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clair de Spleen | Mickaël Comas</title>
+    <title>Clair de Spleen | Portfolio Poétique</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/playfair-display@4.5.13/index.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/raleway@4.5.11/index.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
     <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.0.12/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <style>
         :root {
             --dark-bg: #121318;
@@ -582,6 +584,36 @@
             border-radius: 0.5rem;
             margin-bottom: 3rem;
         }
+
+        .loading-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 2rem 0;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--highlight);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .error-message {
+            color: #e67c7c;
+            background-color: rgba(230, 124, 124, 0.1);
+            border: 1px solid rgba(230, 124, 124, 0.3);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
         
         /* Media queries améliorées pour smartphones */
         @media (max-width: 768px) {
@@ -765,7 +797,10 @@
         
         <div id="poems-container" class="grid grid-cols-1 gap-8">
             <!-- Les poèmes seront chargés dynamiquement ici -->
-            <div class="no-poems-message" id="no-poems-message" data-aos="fade-up">
+            <div class="loading-indicator" id="loading-indicator">
+                <div class="loading-spinner"></div>
+            </div>
+            <div class="no-poems-message" id="no-poems-message" style="display: none;" data-aos="fade-up">
                 <p>Aucun poème n'a encore été publié.</p>
                 <p class="mt-4">Les poèmes que vous ajouterez via l'interface d'administration apparaîtront ici.</p>
             </div>
@@ -803,7 +838,7 @@
         <div class="contact-box" data-aos="fade-up" data-aos-delay="200">
             <div class="contact-info">
                 <p class="mb-4">N'hésitez pas à me contacter :</p>
-                <p class="text-xl mb-6"><a href="/cdn-cgi/l/email-protection#4a2925243e2b293e0a29262b23382e2f393a262f2f243a252f39232f64292527" class="text-amber-400 hover:underline"><span class="__cf_email__" data-cfemail="d1b2bebfa5b0b2a591b2bdb0b8a3b5b4a2a1bdb4b4bfa1beb4a2b8b4ffb2bebc">[email&#160;protected]</span></a></p>
+                <p class="text-xl mb-6"><a href="/cdn-cgi/l/email-protection#1c7f7372687d7f685c7f707d756e7879316f6c70797972327f7371" class="text-amber-400 hover:underline"><span class="__cf_email__" data-cfemail="c4a7abaab0a5a7b084a7a8a5adb6a0a1e9b7b4a8a1a1aaeaa7aba9">[email&#160;protected]</span></a></p>
                 <p class="mb-2">Je suis également disponible pour :</p>
                 <ul class="text-left pl-6 list-disc mb-6">
                     <li>Lectures publiques</li>
@@ -847,6 +882,12 @@
     <div class="cursor-outline" id="cursor-outline"></div>
 
     <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        // Configuration
+        const username = 'Komuald'; // À remplacer par votre nom d'utilisateur
+        const repoName = 'clair-de-spleen'; // À remplacer par le nom de votre dépôt
+        const branch = 'main';
+        const folderPath = '_poemes';
+
         // Initialisation AOS
         document.addEventListener('DOMContentLoaded', function() {
             AOS.init({
@@ -972,49 +1013,139 @@
             }
         });
         
-        // Fonction pour charger les poèmes depuis le dossier _poemes
-        function loadPoems() {
+        // Fonction pour charger les poèmes depuis GitHub
+        async function loadPoems() {
             const poemsContainer = document.getElementById('poems-container');
             const noPoems = document.getElementById('no-poems-message');
+            const loadingIndicator = document.getElementById('loading-indicator');
             
-            // Dans un environnement réel, on utiliserait une fonction comme fetch pour récupérer la liste des poèmes
-            // Pour notre démo, on vérifie s'il y a des poèmes dans le localStorage
-            
-            if (localStorage.getItem('clair-de-spleen-poems')) {
-                try {
-                    const poems = JSON.parse(localStorage.getItem('clair-de-spleen-poems'));
-                    
-                    if (poems && poems.length > 0) {
-                        noPoems.style.display = 'none';
-                        
-                        poems.forEach((poem, index) => {
-                            const poemHTML = createPoemCard(poem, index);
-                            poemsContainer.innerHTML += poemHTML;
-                        });
-                    }
-                } catch (e) {
-                    console.error('Erreur lors du chargement des poèmes :', e);
+            try {
+                // Récupérer la liste des fichiers dans le dossier _poemes
+                const apiUrl = `https://api.github.com/repos/${username}/${repoName}/contents/${folderPath}?ref=${branch}`;
+                const response = await fetch(apiUrl);
+                
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la récupération des poèmes');
                 }
+                
+                const files = await response.json();
+                
+                // Filtrer pour ne garder que les fichiers .md
+                const poemFiles = files.filter(file => file.name.endsWith('.md'));
+                
+                if (poemFiles.length === 0) {
+                    // Aucun poème trouvé
+                    loadingIndicator.style.display = 'none';
+                    noPoems.style.display = 'block';
+                    return;
+                }
+                
+                // Récupérer le contenu de chaque fichier
+                const poems = await Promise.all(
+                    poemFiles.map(async file => {
+                        const contentResponse = await fetch(file.download_url);
+                        if (!contentResponse.ok) {
+                            throw new Error(`Erreur lors de la récupération du poème ${file.name}`);
+                        }
+                        
+                        const content = await contentResponse.text();
+                        return parsePoem(content, file.name);
+                    })
+                );
+                
+                // Trier les poèmes par date (du plus récent au plus ancien)
+                poems.sort((a, b) => new Date(b.date) - new Date(a.date));
+                
+                // Afficher les poèmes
+                loadingIndicator.style.display = 'none';
+                
+                if (poems.length > 0) {
+                    noPoems.style.display = 'none';
+                    
+                    // Créer les cartes de poèmes
+                    poems.forEach((poem, index) => {
+                        const poemHTML = createPoemCard(poem, index);
+                        poemsContainer.innerHTML += poemHTML;
+                    });
+                    
+                    // Réinitialiser AOS pour les nouveaux éléments
+                    AOS.refresh();
+                } else {
+                    noPoems.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Erreur lors du chargement des poèmes:', error);
+                
+                // Afficher un message d'erreur
+                loadingIndicator.style.display = 'none';
+                
+                const errorMessage = document.createElement('div');
+                errorMessage.className = 'error-message';
+                errorMessage.innerHTML = `
+                    <p><strong>Erreur lors du chargement des poèmes</strong></p>
+                    <p>Veuillez vérifier votre connexion Internet et réessayer.</p>
+                    <p class="mt-2 text-sm">${error.message}</p>
+                `;
+                
+                poemsContainer.insertBefore(errorMessage, noPoems);
+                noPoems.style.display = 'block';
+            }
+        }
+        
+        // Fonction pour parser un fichier markdown de poème
+        function parsePoem(content, filename) {
+            // Trouver le frontmatter YAML entre les '---'
+            const frontmatterMatch = content.match(/^---\n([\s\S]*?)\n---/);
+            
+            if (!frontmatterMatch) {
+                // Si pas de frontmatter, utiliser le contenu brut
+                return {
+                    title: filename.replace('.md', ''),
+                    date: new Date().toISOString(),
+                    content: content,
+                    image: null
+                };
             }
             
-            // Dans un vrai environnement Netlify + Decap CMS :
-            // On ferait une requête pour récupérer tous les fichiers markdown du dossier _poemes
-            // Puis on analyserait le frontmatter pour extraire les métadonnées (titre, date, image)
-            // Un exemple minimaliste serait :
-            /*
-            fetch('/_poemes')
-              .then(response => response.json())
-              .then(data => {
-                  if (data && data.length > 0) {
-                      noPoems.style.display = 'none';
-                      data.forEach((poem, index) => {
-                          const poemHTML = createPoemCard(poem, index);
-                          poemsContainer.innerHTML += poemHTML;
-                      });
-                  }
-              })
-              .catch(error => console.error('Erreur lors du chargement des poèmes :', error));
-            */
+            const frontmatterString = frontmatterMatch[1];
+            const poemContent = content.slice(frontmatterMatch[0].length).trim();
+            
+            try {
+                // Parser le YAML avec js-yaml
+                const frontmatter = jsyaml.load(frontmatterString);
+                
+                // Convertir le markdown en HTML pour le contenu du poème
+                const htmlContent = marked.parse(poemContent);
+                
+                return {
+                    title: frontmatter.title || filename.replace('.md', ''),
+                    date: frontmatter.date ? new Date(frontmatter.date).toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }) : new Date().toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }),
+                    content: htmlContent,
+                    image: frontmatter.image || null
+                };
+            } catch (error) {
+                console.error('Erreur lors du parsing du frontmatter:', error);
+                
+                // En cas d'erreur, retourner un objet avec des valeurs par défaut
+                return {
+                    title: filename.replace('.md', ''),
+                    date: new Date().toLocaleDateString('fr-FR', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric'
+                    }),
+                    content: poemContent,
+                    image: null
+                };
+            }
         }
         
         // Fonction pour créer une carte de poème
@@ -1091,59 +1222,20 @@
             adminPanel.innerHTML = `
                 <h3 style="margin-bottom: 10px; color: var(--highlight);">Options d'administration</h3>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <button id="add-poem-btn" style="background-color: var(--highlight); color: var(--dark-bg); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">Ajouter un poème</button>
                     <button id="edit-social-btn" style="background-color: rgba(255,255,255,0.1); color: var(--light-text); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">Modifier les réseaux sociaux</button>
                     <button id="change-author-img-btn" style="background-color: rgba(255,255,255,0.1); color: var(--light-text); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">Changer la photo</button>
+                    <a href="/admin/" style="background-color: var(--highlight); color: var(--dark-bg); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; text-align: center; text-decoration: none;">Interface d'administration</a>
                 </div>
             `;
             
             document.body.appendChild(adminPanel);
             
             // Ajouter les écouteurs d'événements pour les boutons
-            document.getElementById('add-poem-btn').addEventListener('click', showAddPoemDialog);
             document.getElementById('edit-social-btn').addEventListener('click', showEditSocialDialog);
             document.getElementById('change-author-img-btn').addEventListener('click', showChangeImageDialog);
         }
         
-        // Fonctions de dialogue d'administration (seraient définies dans un environnement réel)
-        function showAddPoemDialog() {
-            // Dans un vrai environnement, on utiliserait une interface modale pour ajouter un poème
-            // Pour notre démo, on utilise prompt et localStorage
-            
-            const title = prompt("Titre du poème:");
-            if (!title) return;
-            
-            const content = prompt("Contenu du poème:");
-            if (!content) return;
-            
-            const date = new Date().toLocaleDateString('fr-FR', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            });
-            
-            const poem = {
-                title,
-                content,
-                date,
-                image: null
-            };
-            
-            // Sauvegarder dans localStorage
-            let poems = [];
-            try {
-                poems = JSON.parse(localStorage.getItem('clair-de-spleen-poems')) || [];
-            } catch (e) {
-                poems = [];
-            }
-            
-            poems.push(poem);
-            localStorage.setItem('clair-de-spleen-poems', JSON.stringify(poems));
-            
-            // Recharger la page pour afficher le nouveau poème
-            location.reload();
-        }
-        
+        // Fonctions de dialogue d'administration
         function showEditSocialDialog() {
             // Dialogue pour modifier les liens des réseaux sociaux
             const instagram = prompt("Lien Instagram:", localStorage.getItem('clair-de-spleen-instagram') || '');
