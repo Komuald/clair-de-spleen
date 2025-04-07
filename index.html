@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/raleway@4.5.11/index.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css">
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     <style>
         :root {
             --dark-bg: #121318;
@@ -16,6 +18,10 @@
             --light-text: #f0f2f5;
             --highlight: #c7a578;
             --subtle-accent: #2e3244;
+        }
+        
+        * {
+            cursor: none;
         }
         
         body {
@@ -132,6 +138,7 @@
             align-items: center;
             justify-content: center;
             position: relative;
+            height: 200px;
         }
         
         .poem-illustration img {
@@ -361,7 +368,7 @@
             pointer-events: none;
             z-index: 9998;
             transform: translate(-50%, -50%);
-            transition: transform 0.15s, width 0.3s, height 0.3s;
+            transition: all 0.2s ease-out;
         }
         
         a:hover ~ .cursor-outline,
@@ -369,6 +376,28 @@
             width: 60px;
             height: 60px;
             border-color: var(--highlight);
+        }
+        
+        .cursor-clicked {
+            animation: cursorClick 0.5s forwards;
+        }
+        
+        @keyframes cursorClick {
+            0% {
+                width: 40px;
+                height: 40px;
+                opacity: 1;
+            }
+            50% {
+                width: 35px;
+                height: 35px;
+                opacity: 0.5;
+            }
+            100% {
+                width: 40px;
+                height: 40px;
+                opacity: 1;
+            }
         }
         
         .animation-container {
@@ -504,6 +533,7 @@
             overflow: hidden;
             border: 3px solid var(--highlight);
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
         }
         
         .author-image {
@@ -512,29 +542,15 @@
             object-fit: cover;
         }
         
-        .categories {
+        .author-upload-placeholder {
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
-            flex-wrap: wrap;
-            gap: 0.75rem;
-            margin-bottom: 3rem;
-        }
-        
-        .category-btn {
-            background-color: rgba(255, 255, 255, 0.1);
-            color: var(--light-text);
-            border: none;
-            padding: 0.5rem 1.25rem;
-            border-radius: 2rem;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .category-btn:hover, .category-btn.active {
-            background-color: var(--highlight);
-            color: var(--dark-bg);
-            transform: translateY(-2px);
+            height: 100%;
+            width: 100%;
+            color: var(--highlight);
+            background-color: var(--dark-accent);
         }
         
         .contact-section {
@@ -559,23 +575,12 @@
             margin-bottom: 2rem;
         }
         
-        .publications-list {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .publication-item {
-            background-color: rgba(255, 255, 255, 0.05);
-            padding: 1rem;
+        .no-poems-message {
+            text-align: center;
+            padding: 3rem;
+            background-color: var(--dark-accent);
             border-radius: 0.5rem;
-            transition: transform 0.3s ease;
-        }
-        
-        .publication-item:hover {
-            transform: translateX(5px);
-            background-color: rgba(255, 255, 255, 0.08);
+            margin-bottom: 3rem;
         }
         
         /* Media queries améliorées pour smartphones */
@@ -648,16 +653,6 @@
             .contact-section {
                 padding: 4rem 1.5rem;
             }
-            
-            .categories {
-                gap: 0.5rem;
-                margin-bottom: 2rem;
-            }
-            
-            .category-btn {
-                padding: 0.4rem 1rem;
-                font-size: 0.8rem;
-            }
         }
         
         @media (max-width: 480px) {
@@ -718,7 +713,6 @@
             margin-bottom: 0.5rem;
         }
     </style>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 </head>
 <body>
     <!-- Loader -->
@@ -755,7 +749,7 @@
         </div>
         <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
             <h1 class="site-title">Clair de Spleen</h1>
-            <p class="tagline">Poèmes | Mickaël Comas</p>
+            <p class="tagline">Portfolio poétique où mes mots dansent avec les ombres et mes émotions s'illuminent sous un clair de lune.</p>
             <a href="#poemes" class="scroll-indicator">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 5V19M12 19L5 12M12 19L19 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -769,52 +763,11 @@
         <h2 class="section-title" data-aos="fade-up">Mes Poèmes</h2>
         <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">Découvrez mes créations poétiques, où chaque vers est une fenêtre sur mon âme.</p>
         
-        <div class="categories" data-aos="fade-up" data-aos-delay="150">
-            <button class="category-btn active">Tous</button>
-            <button class="category-btn">Spleen</button>
-            <button class="category-btn">Mythes</button>
-            <button class="category-btn">Amour</button>
-        </div>
-        
-        <div class="grid grid-cols-1 gap-8">
-            <!-- Poème 1 -->
-            <div class="poem-card" data-aos="fade-up" data-aos-delay="200">
-                <div class="poem-flex-container">
-                    <div class="poem-content-wrapper">
-                        <h3 class="poem-title">Cassandre</h3>
-                        <div class="poem-content">
-Sous les voûtes sacrées du temple d’Apollon,
-Cassandre, prophétesse, augura son présage.
-Se vit-elle donner le plus précieux des dons
-Sans mener aucun homme à croire son message.
-
-Prêtresse aux tristes mots que nul ne put entendre,
-Elle cria : « Troyens, le cheval vous tuera ! »
-Mais le sanglot brulant dans la cité de cendres,
-En ses yeux, du destin, la mort se dessina.
-
-Sous l’emprise d’Ajax au temple profané,
-Puis d’Atrides, l’esclave, en province étrangère,
-L’aimée du grand Corèbe au destin condamné
-Vit les ombres sceller la fin de ses prières.
-
-À Mycènes se dresse un palais sanguinaire,
-Où Clytemnestre tint un poignard en sa main.
-Cassandre vit sa mort et ne put s’y soustraire
-Acceptant le péril pour un oracle, en vain.
-</div>
-                        <div class="poem-meta">
-                            <span>14 Mars 2025</span>
-                            <span>Mythes</span>
-                        </div>
-                    </div>
-                    <div class="poem-illustration">
-                        <div class="poem-illustration-placeholder">
-                            <span class="add-illustration-icon">🖼️</span>
-                            <span>Illustration du poème</span>
-                        </div>
-                    </div>
-                </div>
+        <div id="poems-container" class="grid grid-cols-1 gap-8">
+            <!-- Les poèmes seront chargés dynamiquement ici -->
+            <div class="no-poems-message" id="no-poems-message" data-aos="fade-up">
+                <p>Aucun poème n'a encore été publié.</p>
+                <p class="mt-4">Les poèmes que vous ajouterez via l'interface d'administration apparaîtront ici.</p>
             </div>
         </div>
     </section>
@@ -825,7 +778,7 @@ Acceptant le péril pour un oracle, en vain.
         <div class="about-content">
             <h2 class="section-title" data-aos="fade-up">À propos de l'auteur</h2>
             <div class="author-image-container" data-aos="fade-up" data-aos-delay="100">
-                <div class="author-image" style="background-color: var(--dark-accent); display: flex; align-items: center; justify-content: center;">
+                <div id="author-image" class="author-upload-placeholder">
                     <svg width="80" height="80" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M12 11C14.2091 11 16 9.20914 16 7C16 4.79086 14.2091 3 12 3C9.79086 3 8 4.79086 8 7C8 9.20914 9.79086 11 12 11Z" stroke="var(--highlight)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                         <path d="M3 21V19C3 17.9391 3.42143 16.9217 4.17157 16.1716C4.92172 15.4214 5.93913 15 7 15H17C18.0609 15 19.0783 15.4214 19.8284 16.1716C20.5786 16.9217 21 17.9391 21 19V21" stroke="var(--highlight)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
@@ -833,7 +786,11 @@ Acceptant le péril pour un oracle, en vain.
                 </div>
             </div>
             <div data-aos="fade-up" data-aos-delay="150">
-                <p class="mb-6 text-center">Bienvenue dans mon univers poétique. Je m'appelle Mickaël Comas, et je suis le créateur de <strong>Clair de Spleen</strong>.</p>
+                <p class="mb-6 text-center">Bienvenue dans mon univers poétique. Je suis l'artisan des mots derrière <strong>Clair de Spleen</strong>, un espace où je partage mes créations nées sous la lumière argentée de la lune.</p>
+                <p class="mb-6">Depuis mon plus jeune âge, j'ai toujours été fasciné par la capacité des mots à capturer l'essence des émotions humaines. Inspiré par les grands poètes symbolistes comme Baudelaire et Verlaine, j'explore dans mes poèmes la beauté de la mélancolie, les mystères de la nuit et les profondeurs de l'introspection.</p>
+                <p class="mb-6">Pour moi, le spleen n'est pas simplement une tristesse, mais une riche palette d'émotions, une source inépuisable d'inspiration et de beauté. Sous le clair de lune, je transforme les ombres de l'âme en vers lumineux, donnant vie aux sentiments les plus profonds et aux pensées les plus fugaces.</p>
+                <p class="mb-6">Mon écriture se nourrit des contrastes entre lumière et obscurité, joie et mélancolie, présence et absence. Chaque poème est une invitation à voyager dans les méandres de l'âme humaine, à explorer les territoires émotionnels que nous partageons tous.</p>
+                <p>Je vous invite à parcourir ces pages, à vous laisser porter par le rythme des mots et, peut-être, à y trouver un écho à vos propres émotions.</p>
             </div>
         </div>
     </section>
@@ -846,7 +803,7 @@ Acceptant le péril pour un oracle, en vain.
         <div class="contact-box" data-aos="fade-up" data-aos-delay="200">
             <div class="contact-info">
                 <p class="mb-4">N'hésitez pas à me contacter :</p>
-                <p class="text-xl mb-6"><a href="mailto:mickael.comas@gmail.com" class="text-amber-400 hover:underline">mickael.comas@gmail.com</a></p>
+                <p class="text-xl mb-6"><a href="/cdn-cgi/l/email-protection#4a2925243e2b293e0a29262b23382e2f393a262f2f243a252f39232f64292527" class="text-amber-400 hover:underline"><span class="__cf_email__" data-cfemail="d1b2bebfa5b0b2a591b2bdb0b8a3b5b4a2a1bdb4b4bfa1beb4a2b8b4ffb2bebc">[email&#160;protected]</span></a></p>
                 <p class="mb-2">Je suis également disponible pour :</p>
                 <ul class="text-left pl-6 list-disc mb-6">
                     <li>Lectures publiques</li>
@@ -858,17 +815,17 @@ Acceptant le péril pour un oracle, en vain.
             </div>
             
             <div class="social-links">
-                <a href="#" class="social-link">
+                <a href="#" class="social-link" id="instagram-link" title="Instagram">
                     <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                     </svg>
                 </a>
-                <a href="#" class="social-link">
+                <a href="#" class="social-link" id="twitter-link" title="Twitter">
                     <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z"/>
                     </svg>
                 </a>
-                <a href="#" class="social-link">
+                <a href="#" class="social-link" id="facebook-link" title="Facebook">
                     <svg class="social-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z"/>
                     </svg>
@@ -889,7 +846,7 @@ Acceptant le péril pour un oracle, en vain.
     <div class="cursor-dot" id="cursor-dot"></div>
     <div class="cursor-outline" id="cursor-outline"></div>
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Initialisation AOS
         document.addEventListener('DOMContentLoaded', function() {
             AOS.init({
@@ -938,7 +895,7 @@ Acceptant le péril pour un oracle, en vain.
                 }
             });
             
-            // Custom cursor
+            // Custom cursor avec animation de clic
             const cursorDot = document.getElementById('cursor-dot');
             const cursorOutline = document.getElementById('cursor-outline');
             
@@ -951,6 +908,17 @@ Acceptant le péril pour un oracle, en vain.
                 
                 cursorOutline.style.left = `${posX}px`;
                 cursorOutline.style.top = `${posY}px`;
+            });
+            
+            // Animation au clic
+            window.addEventListener('mousedown', function() {
+                cursorOutline.classList.add('cursor-clicked');
+            });
+            
+            window.addEventListener('mouseup', function() {
+                setTimeout(() => {
+                    cursorOutline.classList.remove('cursor-clicked');
+                }, 500);
             });
             
             // Génération des étoiles
@@ -984,53 +952,232 @@ Acceptant le péril pour un oracle, en vain.
                 starsContainer.appendChild(star);
             }
             
-            // Filtrage par catégorie
-            const categoryButtons = document.querySelectorAll('.category-btn');
+            // Chargement dynamique des poèmes
+            loadPoems();
             
-            categoryButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // Retirer la classe active de tous les boutons
-                    categoryButtons.forEach(btn => btn.classList.remove('active'));
-                    
-                    // Ajouter la classe active au bouton cliqué
-                    this.classList.add('active');
-                    
-                    // Logique de filtrage (à implémenter pour un site réel)
-                    // Pour l'instant, c'est juste visuel
+            // Gestion des liens sociaux (récupération depuis localStorage si disponible)
+            loadSocialLinks();
+            
+            // Chargement de la photo de l'auteur (depuis localStorage si disponible)
+            loadAuthorImage();
+            
+            // Si dans l'interface admin, ajout des écouteurs d'événements pour personnaliser
+            if (window.netlifyIdentity) {
+                window.netlifyIdentity.on("init", user => {
+                    if (user) {
+                        // L'utilisateur est connecté, activer les fonctions d'édition
+                        setupAdminFeatures();
+                    }
                 });
+            }
+        });
+        
+        // Fonction pour charger les poèmes depuis le dossier _poemes
+        function loadPoems() {
+            const poemsContainer = document.getElementById('poems-container');
+            const noPoems = document.getElementById('no-poems-message');
+            
+            // Dans un environnement réel, on utiliserait une fonction comme fetch pour récupérer la liste des poèmes
+            // Pour notre démo, on vérifie s'il y a des poèmes dans le localStorage
+            
+            if (localStorage.getItem('clair-de-spleen-poems')) {
+                try {
+                    const poems = JSON.parse(localStorage.getItem('clair-de-spleen-poems'));
+                    
+                    if (poems && poems.length > 0) {
+                        noPoems.style.display = 'none';
+                        
+                        poems.forEach((poem, index) => {
+                            const poemHTML = createPoemCard(poem, index);
+                            poemsContainer.innerHTML += poemHTML;
+                        });
+                    }
+                } catch (e) {
+                    console.error('Erreur lors du chargement des poèmes :', e);
+                }
+            }
+            
+            // Dans un vrai environnement Netlify + Decap CMS :
+            // On ferait une requête pour récupérer tous les fichiers markdown du dossier _poemes
+            // Puis on analyserait le frontmatter pour extraire les métadonnées (titre, date, image)
+            // Un exemple minimaliste serait :
+            /*
+            fetch('/_poemes')
+              .then(response => response.json())
+              .then(data => {
+                  if (data && data.length > 0) {
+                      noPoems.style.display = 'none';
+                      data.forEach((poem, index) => {
+                          const poemHTML = createPoemCard(poem, index);
+                          poemsContainer.innerHTML += poemHTML;
+                      });
+                  }
+              })
+              .catch(error => console.error('Erreur lors du chargement des poèmes :', error));
+            */
+        }
+        
+        // Fonction pour créer une carte de poème
+        function createPoemCard(poem, index) {
+            const delay = 200 + (index * 100);
+            
+            return `
+            <div class="poem-card" data-aos="fade-up" data-aos-delay="${delay}">
+                <div class="poem-flex-container">
+                    <div class="poem-content-wrapper">
+                        <h3 class="poem-title">${poem.title}</h3>
+                        <div class="poem-content">${poem.content}</div>
+                        <div class="poem-meta">
+                            <span>${poem.date}</span>
+                        </div>
+                    </div>
+                    <div class="poem-illustration">
+                        ${poem.image 
+                            ? `<img src="${poem.image}" alt="Illustration pour ${poem.title}" />` 
+                            : `<div class="poem-illustration-placeholder">
+                                <span class="add-illustration-icon">🖼️</span>
+                                <span>Illustration du poème</span>
+                            </div>`
+                        }
+                    </div>
+                </div>
+            </div>`;
+        }
+        
+        // Fonction pour charger les liens sociaux
+        function loadSocialLinks() {
+            // Récupérer les liens depuis localStorage ou utiliser des valeurs par défaut
+            const instagramLink = localStorage.getItem('clair-de-spleen-instagram') || '#';
+            const twitterLink = localStorage.getItem('clair-de-spleen-twitter') || '#';
+            const facebookLink = localStorage.getItem('clair-de-spleen-facebook') || '#';
+            
+            // Mettre à jour les liens
+            document.getElementById('instagram-link').href = instagramLink;
+            document.getElementById('twitter-link').href = twitterLink;
+            document.getElementById('facebook-link').href = facebookLink;
+        }
+        
+        // Fonction pour charger l'image de l'auteur
+        function loadAuthorImage() {
+            const authorImage = localStorage.getItem('clair-de-spleen-author-image');
+            
+            if (authorImage) {
+                const imgElement = document.createElement('img');
+                imgElement.src = authorImage;
+                imgElement.alt = "Photo de l'auteur";
+                imgElement.className = "author-image";
+                
+                document.getElementById('author-image').innerHTML = '';
+                document.getElementById('author-image').appendChild(imgElement);
+            }
+        }
+        
+        // Configuration des fonctionnalités admin
+        function setupAdminFeatures() {
+            // Cette fonction serait appelée si l'utilisateur est connecté
+            // Elle permettrait d'ajouter des écouteurs d'événements pour la personnalisation
+            
+            // Exemple: panneau d'administration flottant
+            const adminPanel = document.createElement('div');
+            adminPanel.style.position = 'fixed';
+            adminPanel.style.bottom = '20px';
+            adminPanel.style.right = '20px';
+            adminPanel.style.backgroundColor = 'var(--dark-accent)';
+            adminPanel.style.padding = '15px';
+            adminPanel.style.borderRadius = '5px';
+            adminPanel.style.boxShadow = '0 0 10px rgba(0,0,0,0.2)';
+            adminPanel.style.zIndex = '999';
+            
+            adminPanel.innerHTML = `
+                <h3 style="margin-bottom: 10px; color: var(--highlight);">Options d'administration</h3>
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button id="add-poem-btn" style="background-color: var(--highlight); color: var(--dark-bg); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">Ajouter un poème</button>
+                    <button id="edit-social-btn" style="background-color: rgba(255,255,255,0.1); color: var(--light-text); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">Modifier les réseaux sociaux</button>
+                    <button id="change-author-img-btn" style="background-color: rgba(255,255,255,0.1); color: var(--light-text); padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer;">Changer la photo</button>
+                </div>
+            `;
+            
+            document.body.appendChild(adminPanel);
+            
+            // Ajouter les écouteurs d'événements pour les boutons
+            document.getElementById('add-poem-btn').addEventListener('click', showAddPoemDialog);
+            document.getElementById('edit-social-btn').addEventListener('click', showEditSocialDialog);
+            document.getElementById('change-author-img-btn').addEventListener('click', showChangeImageDialog);
+        }
+        
+        // Fonctions de dialogue d'administration (seraient définies dans un environnement réel)
+        function showAddPoemDialog() {
+            // Dans un vrai environnement, on utiliserait une interface modale pour ajouter un poème
+            // Pour notre démo, on utilise prompt et localStorage
+            
+            const title = prompt("Titre du poème:");
+            if (!title) return;
+            
+            const content = prompt("Contenu du poème:");
+            if (!content) return;
+            
+            const date = new Date().toLocaleDateString('fr-FR', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
             });
-        });
+            
+            const poem = {
+                title,
+                content,
+                date,
+                image: null
+            };
+            
+            // Sauvegarder dans localStorage
+            let poems = [];
+            try {
+                poems = JSON.parse(localStorage.getItem('clair-de-spleen-poems')) || [];
+            } catch (e) {
+                poems = [];
+            }
+            
+            poems.push(poem);
+            localStorage.setItem('clair-de-spleen-poems', JSON.stringify(poems));
+            
+            // Recharger la page pour afficher le nouveau poème
+            location.reload();
+        }
+        
+        function showEditSocialDialog() {
+            // Dialogue pour modifier les liens des réseaux sociaux
+            const instagram = prompt("Lien Instagram:", localStorage.getItem('clair-de-spleen-instagram') || '');
+            const twitter = prompt("Lien Twitter:", localStorage.getItem('clair-de-spleen-twitter') || '');
+            const facebook = prompt("Lien Facebook:", localStorage.getItem('clair-de-spleen-facebook') || '');
+            
+            localStorage.setItem('clair-de-spleen-instagram', instagram || '#');
+            localStorage.setItem('clair-de-spleen-twitter', twitter || '#');
+            localStorage.setItem('clair-de-spleen-facebook', facebook || '#');
+            
+            loadSocialLinks();
+        }
+        
+        function showChangeImageDialog() {
+            // Dans un vrai environnement, on utiliserait un sélecteur de fichier
+            // Pour notre démo, on utilise un lien d'image
+            const imageUrl = prompt("URL de votre photo:", localStorage.getItem('clair-de-spleen-author-image') || '');
+            
+            if (imageUrl) {
+                localStorage.setItem('clair-de-spleen-author-image', imageUrl);
+                loadAuthorImage();
+            }
+        }
+        
+        // Si Netlify Identity est présent, configurer les redirections
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
     </script>
-    <script>
-  if (window.netlifyIdentity) {
-    window.netlifyIdentity.on("init", user => {
-      if (!user) {
-        window.netlifyIdentity.on("login", () => {
-          document.location.href = "/admin/";
-        });
-      } else {
-        document.location.href = "/admin/";
-      }
-    });
-    
-    // Gérer spécifiquement les redirections de réinitialisation de mot de passe
-    if (document.location.hash.startsWith('#recovery_token=')) {
-      // Ouvrir automatiquement le widget d'identité
-      const recoveryToken = document.location.hash.replace('#recovery_token=', '');
-      window.netlifyIdentity.open('recover');
-      window.netlifyIdentity.gotrue.recover(recoveryToken, true)
-        .then(() => {
-          console.log('Récupération réussie, redirection...');
-          // Une fois la récupération terminée, redirigez vers l'admin
-          setTimeout(() => {
-            document.location.href = "/admin/";
-          }, 1000);
-        })
-        .catch(err => {
-          console.error('Erreur lors de la récupération', err);
-        });
-    }
-  }
-</script>
 </body>
 </html>
