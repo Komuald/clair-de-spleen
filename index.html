@@ -132,7 +132,7 @@
         
         .poem-illustration {
             flex: 0 0 auto;
-            max-width: 500px;
+            max-width: 600px;
             max-height: 100%;
             border-radius: 0.5rem;
             overflow: hidden;
@@ -167,9 +167,21 @@
         
         .poem-content {
             font-size: 1.15rem;
-            line-height: 1.8;
-            margin-bottom: 1.5rem;
+            line-height: 1;
+            margin-bottom: 1.2rem;
             white-space: pre-line;
+        }
+
+        .poem-content p {
+            margin-bottom: 1.2rem;
+        }
+
+        .poem-content br {
+            line-height: 1.2;
+        }
+
+        .poem-content {
+            line-height: 1.4; /* écrase la précédente line-height pour plus de compacité */
         }
         
         .poem-meta {
